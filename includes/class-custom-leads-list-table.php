@@ -16,10 +16,15 @@ class Custom_Leads_List_Table extends WP_List_Table
         ] );
     }
 
+    /**
+     * Get columns
+     *
+     * @return array
+     */
     public function get_columns()
     {
         $columns = [
-            'cb'          => '<input type="checkbox" />', // Render a checkbox instead of text
+            'cb'          => '<input type="checkbox" />',
             'message'     => __( 'Message', 'textdomain' ),
             'status'      => __( 'Status', 'textdomain' ),
             'phone'       => __( 'Phone', 'textdomain' ),
@@ -31,11 +36,21 @@ class Custom_Leads_List_Table extends WP_List_Table
         return $columns;
     }
 
+    /**
+     * Column CB
+     *
+     * @return array
+     */
     public function column_cb( $item )
     {
         return sprintf( '<input type="checkbox" name="lead[]" value="%s" />', $item->id );
     }
 
+    /**
+     * Column actions
+     *
+     * @return array
+     */
     public function column_actions( $item )
     {
         $actions = [
@@ -46,14 +61,18 @@ class Custom_Leads_List_Table extends WP_List_Table
         return $this->row_actions( $actions );
     }
 
+    /**
+     * Prepare items
+     *
+     * @return array
+     */
     public function prepare_items()
     {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'custom_lead'; // do not forget about tables prefix
+        $table_name = $wpdb->prefix . 'custom_lead';
 
-        $per_page = 10; // constant, how much records will be shown per page
-
+        $per_page              = 2;
         $columns               = $this->get_columns();
         $hidden                = [];
         $sortable              = [];
@@ -77,6 +96,11 @@ class Custom_Leads_List_Table extends WP_List_Table
         ] );
     }
 
+    /**
+     * Column default
+     *
+     * @return array
+     */
     public function column_default( $item, $column_name )
     {
         switch ( $column_name ) {
@@ -91,6 +115,11 @@ class Custom_Leads_List_Table extends WP_List_Table
         }
     }
 
+    /**
+     * Get bulk actions
+     *
+     * @return array
+     */
     public function get_bulk_actions()
     {
         $actions = [
@@ -100,6 +129,11 @@ class Custom_Leads_List_Table extends WP_List_Table
         return $actions;
     }
 
+    /**
+     * Process bulk actions
+     *
+     * @return array
+     */
     public function process_bulk_action()
     {
         global $wpdb;
@@ -117,4 +151,5 @@ class Custom_Leads_List_Table extends WP_List_Table
             }
         }
     }
+
 }
