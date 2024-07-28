@@ -26,6 +26,7 @@ Author URI: nzaro19@gmail.com
 if ( !defined( 'G_LEADS' ) ) {
     define( 'G_LEADS', '1.0.0' );
 }
+include_once plugin_dir_path( __FILE__ ) . 'includes/class-custom-leads-list-table.php';
 
 // Start up the engine
 class G_Leads
@@ -124,6 +125,13 @@ class G_Leads
             $this->handle_form_submission();
         }
 
+        // Handle edit and delete actions
+        if ( isset( $_GET['action'] ) && $_GET['action'] === 'edit' ) {
+            $this->handle_edit_action();
+        } elseif ( isset( $_GET['action'] ) && $_GET['action'] === 'delete' ) {
+            $this->handle_delete_action();
+        }
+
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Custom Leads', 'textdomain' ); ?></h1>
@@ -157,6 +165,40 @@ class G_Leads
             </form>
         </div>
         <?php
+
+        // Display the list table
+        $leads_table = new Custom_Leads_List_Table();
+        $leads_table->prepare_items();
+        ?>
+        <div class="wrap">
+            <h2><?php esc_html_e( 'Leads List', 'textdomain' ); ?></h2>
+            <form method="post">
+                <?php
+                $leads_table->display();
+        ?>
+            </form>
+        </div>
+        <?php
+    }
+
+    /**
+     * Handle edit action
+     *
+     * @return void
+     */
+    public function handle_edit_action()
+    {
+        //code to handle edit action here
+    }
+
+    /**
+     * Handle delete action
+     *
+     * @return void
+     */
+    public function handle_delete_action()
+    {
+        //code to handle delete action here
     }
 
     /**
