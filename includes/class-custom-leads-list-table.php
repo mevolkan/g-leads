@@ -85,7 +85,7 @@ class Custom_Leads_List_Table extends WP_List_Table
             case 'phone':
             case 'country':
             case 'create_date':
-                return $item->$column_name;
+                return sprintf( '<div class="editable" data-id="%d" data-column="%s">%s</div>', $item->id, $column_name, esc_html( $item->$column_name ) );
             default:
                 return print_r( $item, true ); // Show the whole array for troubleshooting purposes
         }

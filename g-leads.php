@@ -51,6 +51,7 @@ class G_Leads
         add_action( 'plugins_loaded', [$this, 'textdomain'] );
         add_action( 'admin_enqueue_scripts', [$this, 'admin_scripts'] );
         add_action( 'admin_menu', [$this, 'add_custom_leads_menu'] );
+        add_action( 'wp_ajax_update_lead', [$this, 'update_lead'] );
 
         // front end
         add_action( 'wp_enqueue_scripts', [$this, 'front_scripts'], 10 );
@@ -89,6 +90,7 @@ class G_Leads
     public function admin_scripts()
     {
         wp_enqueue_style( 'gleads-admin', plugins_url( 'lib/css/admin.css', __FILE__ ), [], G_LEADS, 'all' );
+        wp_enqueue_script( 'gleads-admin', plugins_url( 'lib/js/admin-scripts.js', __FILE__ ), [], G_LEADS, 'all' );
     }
 
     /**
@@ -325,6 +327,43 @@ class G_Leads
             exit;
         } else {
             wp_die( __( 'Invalid lead ID.', 'textdomain' ) );
+        }
+    }
+
+    /**
+     * Handle form submission
+     *
+     * @return void
+     */
+    public function update_lead()
+    {
+        if ( !isset( $_POST['_ajax_nonce'] ) || !wp_verify_nonce( $_POST['_ajax_nonce'], 'update_lead_action' ) ) {
+            wp_send_json_error( ['message' => 'Nonce verification failed'] );
+        }
+
+        global $wpdb;
+
+        $id     = isset( $_POST['id'] ) ? intval( $_POST['id'] ) : 0;
+        $column = isset( $_POST['column'] ) ? sanitize_text_field( $_POST['column'] ) : '';
+        $value  = isset( $_POST['value'] ) ? sanitize_text_field( $_POST['value'] ) : '';
+
+        if ( !$id || !$column || !in_array( $column, ['message', 'status', 'phone', 'country'] ) ) {
+            wp_send_json_error( ['message' => 'Invalid parameters'] );
+        }
+
+        $table_name = $wpdb->prefix . 'custom_lead';
+        $updated    = $wpdb->update(
+            $table_name,
+            [$column => $value],
+            ['id'    => $id],
+            ['%s'],
+            ['%d']
+        );
+
+        if ( $updated !== false ) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error( ['message' => 'Failed to update record'] );
         }
     }
 
