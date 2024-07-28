@@ -51,14 +51,19 @@ class Custom_Leads_List_Table extends WP_List_Table
      *
      * @return array
      */
-    public function column_actions( $item )
-    {
-        $actions = [
-            'edit'   => sprintf( '<a href="?page=%s&action=%s&lead=%s">' . __( 'Edit', 'textdomain' ) . '</a>', $_REQUEST['page'], 'edit', $item->id ),
-            'delete' => sprintf( '<a href="?page=%s&action=%s&lead=%s">' . __( 'Delete', 'textdomain' ) . '</a>', $_REQUEST['page'], 'delete', $item->id ),
-        ];
-
-        return $this->row_actions( $actions );
+    public function column_actions( $item ) {
+        $delete_nonce = wp_create_nonce( 'delete_lead' );
+        $delete_url = wp_nonce_url(
+            add_query_arg( array(
+                'page' => 'custom-leads',
+                'action' => 'delete',
+                'lead' => $item->id
+            ), admin_url( 'admin.php' ) ),
+            'delete_lead'
+        );
+    
+        // Output the delete link with JavaScript confirmation
+        echo '<a href="#" class="delete-lead" data-url="' . esc_url( $delete_url ) . '">' . __( 'Delete', 'textdomain' ) . '</a>';
     }
 
     /**
@@ -72,7 +77,7 @@ class Custom_Leads_List_Table extends WP_List_Table
 
         $table_name = $wpdb->prefix . 'custom_lead';
 
-        $per_page              = 2;
+        $per_page              = 20;
         $columns               = $this->get_columns();
         $hidden                = [];
         $sortable              = [];
@@ -151,5 +156,4 @@ class Custom_Leads_List_Table extends WP_List_Table
             }
         }
     }
-
 }

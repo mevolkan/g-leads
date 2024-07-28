@@ -305,30 +305,34 @@ class G_Leads
      *
      * @return void
      */
-    public function handle_delete_action()
-    {
+    public function handle_delete_action() {
         global $wpdb;
-
+    
         // Verify user capability
-        if ( !current_user_can( 'manage_options' ) ) {
+        if ( ! current_user_can( 'manage_options' ) ) {
             wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
         }
-
+    
+        // Verify nonce for security
+        if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'delete_lead' ) ) {
+            wp_die( __( 'Security check failed', 'textdomain' ) );
+        }
+    
         // Get the lead ID from the query string
         $id = isset( $_GET['lead'] ) ? intval( $_GET['lead'] ) : 0;
-
+    
         // Delete the lead if ID is valid
         if ( $id ) {
             $table_name = $wpdb->prefix . 'custom_lead';
             $wpdb->delete( $table_name, ['id' => $id], ['%d'] );
-
-            ob_clean();
+    
             wp_redirect( admin_url( 'admin.php?page=custom-leads' ) );
             exit;
         } else {
             wp_die( __( 'Invalid lead ID.', 'textdomain' ) );
         }
     }
+    
 
     /**
      * Handle form submission
