@@ -23,8 +23,8 @@ Author URI: nzaro19@gmail.com
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-if( !defined( 'G_LEADS' ) )
-	define( 'G_LEADS', '1.0.0' );
+if (!defined('G_LEADS'))
+	define('G_LEADS', '1.0.0');
 
 // Start up the engine
 class G_Leads
@@ -41,14 +41,16 @@ class G_Leads
 	 *
 	 * @return void
 	 */
-	private function __construct() {
+	private function __construct()
+	{
 		// back end
-		add_action		( 'plugins_loaded', 					array( $this, 'textdomain'				) 			);
-		add_action		( 'admin_enqueue_scripts',				array( $this, 'admin_scripts'			)			);
+		add_action('plugins_loaded', array($this, 'textdomain'));
+		add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
+		add_action('admin_menu', array($this, 'add_custom_leads_menu'));
 
 
 		// front end
-		add_action		( 'wp_enqueue_scripts',					array( $this, 'front_scripts'			),	10		);
+		add_action('wp_enqueue_scripts',					array($this, 'front_scripts'),	10);
 	}
 
 	/**
@@ -58,8 +60,9 @@ class G_Leads
 	 * @return G_Leads
 	 */
 
-	public static function getInstance() {
-		if ( !self::$instance )
+	public static function getInstance()
+	{
+		if (!self::$instance)
 			self::$instance = new self;
 		return self::$instance;
 	}
@@ -70,10 +73,10 @@ class G_Leads
 	 * @return void
 	 */
 
-	public function textdomain() {
+	public function textdomain()
+	{
 
-		load_plugin_textdomain( 'gleads', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-
+		load_plugin_textdomain('gleads', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 	}
 
 	/**
@@ -82,18 +85,9 @@ class G_Leads
 	 * @return void
 	 */
 
-	public function admin_scripts() {
-
-		$types = $this->get_post_types();
-
-		$screen	= get_current_screen();
-
-		if ( in_array( $screen->post_type , $types ) ) :
-
-			wp_enqueue_style( 'gleads-admin', plugins_url('lib/css/admin.css', __FILE__), array(), G_LEADS, 'all' );
-
-		endif;
-
+	public function admin_scripts()
+	{
+		wp_enqueue_style('gleads-admin', plugins_url('lib/css/admin.css', __FILE__), array(), G_LEADS, 'all');
 	}
 
 
@@ -103,22 +97,14 @@ class G_Leads
 	 * @return void
 	 */
 
-	public function front_scripts() {
+	public function front_scripts()
+	{
 
-		// check for killswitch first
-		$killswitch	= apply_filters( 'gleads_killswitch', false );
 
-		if ( $killswitch )
-			return false;
-
-		$types = $this->get_post_types();
-
-		if ( is_singular( $types ) )
-			wp_enqueue_style( 'gleads-notes', plugins_url( 'lib/css/gleads-notes.css', __FILE__ ), array(), G_LEADS, 'all' );
-
+		wp_enqueue_style('gleads-notes', plugins_url('lib/css/gleads-notes.css', __FILE__), array(), G_LEADS, 'all');
 	}
 
-/// end class
+	/// end class
 }
 
 
