@@ -90,6 +90,44 @@ class G_Leads
 		wp_enqueue_style('gleads-admin', plugins_url('lib/css/admin.css', __FILE__), array(), G_LEADS, 'all');
 	}
 
+	/**
+	 * Custom leads Menu
+	 *
+	 * @return void
+	 */
+
+	public function add_custom_leads_menu()
+	{
+		// Ensure the user has the capability to manage options
+		if (current_user_can('manage_options')) {
+			// Add a new menu item
+			add_menu_page(
+				'Custom Leads',
+				'Custom Leads',
+				'manage_options',
+				'custom-leads',
+				array($this, 'display_custom_leads_page'),
+				'dashicons-welcome-learn-more',
+				26
+			);
+		}
+	}
+
+	/**
+	 * display the custom leads page
+	 *
+	 * @return void
+	 */
+	public function display_custom_leads_page()
+	{
+		?>
+		<div class="wrap">
+			<h1><?php esc_html_e('Custom Leads', 'textdomain'); ?></h1>
+			<p><?php esc_html_e('Welcome to the Custom Leads page.', 'textdomain'); ?></p>
+		</div>
+		<?php
+	}
+
 
 	/**
 	 * call front-end CSS
