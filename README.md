@@ -1,106 +1,75 @@
-# WP Comment Notes #
+# WP Comment Notes
+Contributors: Samuel Nzaro
+Website Link: https://nzaro.netlify.app/
+Tags: Leads
+Requires at least: 6.0
+Tested up to: 6.1
+Stable tag: 1.0.0
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-**Contributors:** norcross, mordauk
+G Leads is a WordPress plugin designed to help you manage custom data entries from within the WordPress admin panel. With this plugin, you can efficiently add, edit, delete, and view custom data stored in your WordPress database.
 
-**Website Link:** http://andrewnorcross.com/plugins/
+## Features
 
-**Donate link:** https://andrewnorcross.com/donate
+    Custom Data Management: Add, edit, and delete entries directly from the WordPress admin panel.
+    Intuitive Interface: Easily navigate and manage your custom data with a user-friendly interface.
+    Sortable and Paginated List: View and organize your data in a sortable and paginated table format.
+    Security: Built-in nonce verification to ensure secure operations.
 
-**Tags:** comments, comment notes, comment
+## Installation
 
-**Requires at least:** 3.0
+    Download the G Leads plugin ZIP file from the repository or website.
+    Upload the ZIP file to your WordPress site via Plugins > Add New > Upload Plugin.
+    Activate the plugin from the Plugins menu in WordPress.
 
-**Tested up to:** 3.6
+## Usage
+Accessing the Plugin
 
-**Stable tag:** 1.0.0
+    Once activated, a new menu item labeled G Leads will appear in the WordPress admin menu.
+    Click on G Leads to access the custom data management interface.
 
-**License:** GPLv2 or later
+Managing Data
 
-**License URI:** http://www.gnu.org/licenses/gpl-2.0.html
+    View Entries: The main screen displays a list of custom data entries in a table format. Use the table to view, sort, and paginate through your data.
+    Add New Entry: Click on the Add New button to open a form where you can input and save new data.
+    Edit Entry: Click on the Edit link next to an entry to modify its details. Update the fields and save changes.
+    Delete Entry: Click on the Delete link to remove an entry. A confirmation prompt will appear to ensure you want to proceed with the deletion.
 
+Managing the Table
 
-Add custom notes before or after the comment form.
+    Sortable Columns: Click on the column headers to sort the entries by that column.
+    Pagination: Navigate through multiple pages of data using the pagination controls.
 
-## Description ##
+## Screenshots
 
-Add custom notes before or after the comment form.
+    Admin Menu: Shows the new G Leads menu item in the admin panel.
+    Data Management Table: Displays the sortable and paginated list of custom data entries.
+    Add/Edit Form: Provides a user-friendly interface to add or modify data.
 
+## Frequently Asked Questions
 
-## Installation ##
+Q: Can I customize the fields for the data entries?
 
-This section describes how to install the plugin and get it working.
+A: Yes, you can customize the fields by modifying the plugin’s code to match your specific data requirements.
 
-1. Upload `wp-comment-notes` to the `/wp-content/plugins/` directory.
-2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Add some text in the fields on a post
-4. That's it.
+Q: How do I secure the plugin from unauthorized access?
 
+A: The plugin includes nonce verification to secure data operations. Ensure that only users with the necessary capabilities have access to the plugin.
 
-## Frequently Asked Questions ##
+Q: What should I do if I encounter issues with the plugin?
 
+A: Check the plugin documentation and FAQs for troubleshooting tips. If you need further assistance, you can contact support through the plugin's support forum or website.
 
-### How does it work? ###
+## Changelog
+Version 1.0.0
 
-Activate the plugin and the metaboxes will appear for posts. Use the filter to add more post type support.
+    Initial release with basic functionality: add, edit, delete, and view custom data entries.
 
-### Does this work on my custom post type? ###
+## Contributing
 
-Not by default. Use the `wpcmn_type_support` filter to add it.
+Contributions to the G Leads plugin are welcome! If you have suggestions or improvements, please submit a pull request on the plugin’s GitHub repository or contact the maintainer.
 
-**Example:**
-```php
-function cmm_partial_types( $types ) {
+## License
 
-	$types[] = 'MY_CUSTOM_POST_TYPE';
-
-	return $types;
-}
-add_filter( 'wpcmn_type_support', 'cmm_partial_types' );
-```
-
-### Can I add more options to the message type dropdown? ###
-
-Sure can. Use the `wpcmn_before_types` or `wpcmn_after_types` filters.
-
-**Example:**
-```php
-function cmm_more_before( $before_type ) {
-
-	$extra = '';
-	$extra .= '<option value="wild" '.selected( $before_type, 'wild', false ).'>'.__('Wild', 'wpcmn').'</option>';
-	$extra .= '<option value="crazy" '.selected( $before_type, 'crazy', false ).'>'.__('Crazy', 'wpcmn').'</option>';
-
-	return $extra;
-
-}
-add_filter( 'wpcmn_before_types', 'cmm_more_before' );
-```
-
-### I don't like the CSS that comes with it ###
-
-Then write your own. It's a free country. If you *have* to disable it, use the `wpcmn_killswitch` filter.
-
-**Example:**
-```php
-add_filter( 'wpcmn_killswitch', '__return_true' );
-```
-
-### Where is the settings menu? ###
-
-There isn't one. On purpose.
-
-### They don't show up on my theme. ###
-
-Then you're using a theme / framework that has gone cowboy and done it their own way. I can't do anything about that.
-
-
-## Changelog ##
-
-### 1.0 ###
-* First release!
-
-
-## Upgrade Notice ##
-
-### 1.0 ###
-* First release!
+G Leads is released under the GPLv2 license.

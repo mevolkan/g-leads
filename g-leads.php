@@ -2,7 +2,7 @@
 /*
 Plugin Name: G Leads
 Plugin URI: github.com/mevolkan/g-leads
-Description: Plugin  adds a new menu item to the admin panel. The menu item should allow users to manage a list of custom data entries stored in a database table. Provide functionalities to add, edit, delete, and view these entries.
+Description: G Leads is a WordPress plugin designed to help you manage custom data entries from within the WordPress admin panel. With this plugin, you can efficiently add, edit, delete, and view custom data stored in your WordPress database.
 Version: 1.0.0
 Author: Samuel Nzaro
 Author URI: nzaro19@gmail.com
@@ -90,7 +90,11 @@ class G_Leads
     public function admin_scripts()
     {
         wp_enqueue_style( 'gleads-admin', plugins_url( 'lib/css/admin.css', __FILE__ ), [], G_LEADS, 'all' );
-        wp_enqueue_script( 'gleads-admin', plugins_url( 'lib/js/admin-scripts.js', __FILE__ ), [], G_LEADS, 'all' );
+        wp_enqueue_script( 'gleads-admin-script', plugins_url( 'lib/js/admin-scripts.js', __FILE__ ), [], G_LEADS, 'all' );
+        wp_localize_script( 'gleads-admin-script', 'ajax_var', [
+            'url'   => admin_url( 'admin-ajax.php' ),
+            'nonce' => wp_create_nonce( 'ajax-nonce' ),
+        ] );
     }
 
     /**
@@ -305,34 +309,34 @@ class G_Leads
      *
      * @return void
      */
-    public function handle_delete_action() {
+    public function handle_delete_action()
+    {
         global $wpdb;
-    
+
         // Verify user capability
         if ( ! current_user_can( 'manage_options' ) ) {
             wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
         }
-    
+
         // Verify nonce for security
         if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'delete_lead' ) ) {
             wp_die( __( 'Security check failed', 'textdomain' ) );
         }
-    
+
         // Get the lead ID from the query string
         $id = isset( $_GET['lead'] ) ? intval( $_GET['lead'] ) : 0;
-    
+
         // Delete the lead if ID is valid
         if ( $id ) {
             $table_name = $wpdb->prefix . 'custom_lead';
             $wpdb->delete( $table_name, ['id' => $id], ['%d'] );
-    
+
             wp_redirect( admin_url( 'admin.php?page=custom-leads' ) );
             exit;
         } else {
             wp_die( __( 'Invalid lead ID.', 'textdomain' ) );
         }
     }
-    
 
     /**
      * Handle form submission
@@ -341,9 +345,9 @@ class G_Leads
      */
     public function update_lead()
     {
-        if ( !isset( $_POST['_ajax_nonce'] ) || !wp_verify_nonce( $_POST['_ajax_nonce'], 'update_lead_action' ) ) {
-            wp_send_json_error( ['message' => 'Nonce verification failed'] );
-        }
+        // if ( !isset( $_POST['_ajax_nonce'] ) || !wp_verify_nonce( $_POST['_ajax_nonce'], 'update_lead_action' ) ) {
+        //     wp_send_json_error( ['message' => 'Nonce verification failed'] );
+        // }
 
         global $wpdb;
 

@@ -51,17 +51,18 @@ class Custom_Leads_List_Table extends WP_List_Table
      *
      * @return array
      */
-    public function column_actions( $item ) {
+    public function column_actions( $item )
+    {
         $delete_nonce = wp_create_nonce( 'delete_lead' );
-        $delete_url = wp_nonce_url(
-            add_query_arg( array(
-                'page' => 'custom-leads',
+        $delete_url   = wp_nonce_url(
+            add_query_arg( [
+                'page'   => 'custom-leads',
                 'action' => 'delete',
-                'lead' => $item->id
-            ), admin_url( 'admin.php' ) ),
+                'lead'   => $item->id,
+            ], admin_url( 'admin.php' ) ),
             'delete_lead'
         );
-    
+
         // Output the delete link with JavaScript confirmation
         echo '<a href="#" class="delete-lead" data-url="' . esc_url( $delete_url ) . '">' . __( 'Delete', 'textdomain' ) . '</a>';
     }
