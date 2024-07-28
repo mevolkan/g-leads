@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: WP Comment Notes
-Plugin URI: http://andrewnorcross.com/plugins/
-Description: Add custom notes before or after the comment form.
+Plugin Name: G Leads
+Plugin URI: github.com/mevolkan/g-leads
+Description: Plugin  adds a new menu item to the admin panel. The menu item should allow users to manage a list of custom data entries stored in a database table. Provide functionalities to add, edit, delete, and view these entries.
 Version: 1.0.0
-Author: Andrew Norcross
-Author URI: http://andrewnorcross.com
+Author: Samuel Nzaro
+Author URI: nzaro19@gmail.com
 
-	Copyright 2013 Andrew Norcross
+	Copyright 2013 Samuel Nzaro
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License, version 2, as
@@ -23,11 +23,11 @@ Author URI: http://andrewnorcross.com
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-if( !defined( 'WPCMN_VER' ) )
-	define( 'WPCMN_VER', '1.0.0' );
+if( !defined( 'G_LEADS' ) )
+	define( 'G_LEADS', '1.0.0' );
 
 // Start up the engine
-class WP_Comment_Notes
+class G_Leads
 {
 
 	/**
@@ -57,7 +57,7 @@ class WP_Comment_Notes
 	 * If an instance exists, this returns it.  If not, it creates one and
 	 * retuns it.
 	 *
-	 * @return WP_Comment_Notes
+	 * @return G_Leads
 	 */
 
 	public static function getInstance() {
@@ -74,7 +74,7 @@ class WP_Comment_Notes
 
 	public function textdomain() {
 
-		load_plugin_textdomain( 'wpcmn', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'gleads', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 	}
 
@@ -92,7 +92,7 @@ class WP_Comment_Notes
 
 		if ( in_array( $screen->post_type , $types ) ) :
 
-			wp_enqueue_style( 'wpcmn-admin', plugins_url('lib/css/admin.css', __FILE__), array(), WPCMN_VER, 'all' );
+			wp_enqueue_style( 'gleads-admin', plugins_url('lib/css/admin.css', __FILE__), array(), G_LEADS, 'all' );
 
 		endif;
 
@@ -109,7 +109,7 @@ class WP_Comment_Notes
 		$types = $this->get_post_types();
 
 		if ( in_array( $page,  $types ) )
-			add_meta_box( 'wp-comment-notes', __( 'Comment Notes', 'wpcmn' ), array( $this, 'wpcmn_notes_meta' ), $page, 'advanced', 'high' );
+			add_meta_box( 'wp-comment-notes', __( 'Comment Notes', 'gleads' ), array( $this, 'gleads_notes_meta' ), $page, 'advanced', 'high' );
 
 	}
 
@@ -119,75 +119,75 @@ class WP_Comment_Notes
 	 * @return void
 	 */
 
-	public function wpcmn_notes_meta( $post ) {
+	public function gleads_notes_meta( $post ) {
 
 		// Use nonce for verification
-		wp_nonce_field( 'wpcmn_meta_nonce', 'wpcmn_meta_nonce' );
+		wp_nonce_field( 'gleads_meta_nonce', 'gleads_meta_nonce' );
 
 		$post_id	= $post->ID;
 
 		// get postmeta, and our initial settings
-		$notes		= get_post_meta( $post_id, '_wpcmn_notes', true );
+		$notes		= get_post_meta( $post_id, '_gleads_notes', true );
 
 		$before_text	= isset( $notes['before-text'] )	? $notes['before-text']	: '';
-		$before_type	= isset( $notes['before-type'] )	? $notes['before-type']	: 'wpcmn-notes-standard';
+		$before_type	= isset( $notes['before-type'] )	? $notes['before-type']	: 'gleads-notes-standard';
 		$after_text		= isset( $notes['after-text'] )		? $notes['after-text']	: '';
-		$after_type		= isset( $notes['after-type'] )		? $notes['after-type']	: 'wpcmn-notes-standard';
+		$after_type		= isset( $notes['after-type'] )		? $notes['after-type']	: 'gleads-notes-standard';
 
-		echo '<script type="text/javascript">jQuery(document).ready(function($){$("#comment_status").click(function(){$(".wpcmn-notes-table tr").toggle();})});</script>';
+		echo '<script type="text/javascript">jQuery(document).ready(function($){$("#comment_status").click(function(){$(".gleads-notes-table tr").toggle();})});</script>';
 
 		$disabled_display = comments_open( $post_id )   ? ' style="display:none;"' : '';
 		$enabled_display  = ! comments_open( $post_id ) ? ' style="display:none;"' : '';
 
-		echo '<table class="form-table wpcmn-notes-table">';
+		echo '<table class="form-table gleads-notes-table">';
 
-			echo '<tr class="wpcmn-notes-disabled"' . $disabled_display . '>';
-				echo '<th>' . __( 'Enable comments in order to use Comment Notes', 'wpcmn' ) . '</th>';
+			echo '<tr class="gleads-notes-disabled"' . $disabled_display . '>';
+				echo '<th>' . __( 'Enable comments in order to use Comment Notes', 'gleads' ) . '</th>';
 			echo '</tr>';
 
-			echo '<tr class="wpcmn-notes-title"' . $enabled_display . '>';
-			echo '<td colspan="2"><h5>'.__( 'Before Notes Area', 'wpcmn' ) . '</h5></td>';
+			echo '<tr class="gleads-notes-title"' . $enabled_display . '>';
+			echo '<td colspan="2"><h5>'.__( 'Before Notes Area', 'gleads' ) . '</h5></td>';
 			echo '</tr>';
 
-			echo '<tr class="wpcmn-notes-data wpcmn-notes-before-text"' . $enabled_display . '>';
-				echo '<th>'.__( 'Message Text', 'wpcmn' ) . '</th>';
+			echo '<tr class="gleads-notes-data gleads-notes-before-text"' . $enabled_display . '>';
+				echo '<th>'.__( 'Message Text', 'gleads' ) . '</th>';
 				echo '<td>';
-					echo '<textarea class="widefat" name="wpcmn-notes[before-text]" id="wpcmn-before">'.esc_attr( $before_text ) . '</textarea>';
-					echo '<p class="description">'.__( 'Note: This will not appear to users who are logged in.', 'wpcmn' ) . '</p>';
+					echo '<textarea class="widefat" name="gleads-notes[before-text]" id="gleads-before">'.esc_attr( $before_text ) . '</textarea>';
+					echo '<p class="description">'.__( 'Note: This will not appear to users who are logged in.', 'gleads' ) . '</p>';
 				echo '</td>';
 			echo '</tr>';
 
-			echo '<tr class="wpcmn-notes-data wpcmn-notes-before-type"' . $enabled_display . '>';
-				echo '<th>'.__( 'Message Type', 'wpcmn' ) . '</th>';
+			echo '<tr class="gleads-notes-data gleads-notes-before-type"' . $enabled_display . '>';
+				echo '<th>'.__( 'Message Type', 'gleads' ) . '</th>';
 				echo '<td>';
-					echo '<select id="wpcmn-before-type" name="wpcmn-notes[before-type]">';
-					echo '<option value="wpcmn-notes-standard"' . selected( $before_type, 'wpcmn-notes-standard', false ) . '>' . __( 'Standard', 'wpcmn' ) . '</option>';
-					echo '<option value="wpcmn-notes-warning"' . selected( $before_type, 'wpcmn-notes-warning', false ) . '>' . __( 'Warning', 'wpcmn' ) . '</option>';
-					echo '<option value="wpcmn-notes-alert"' . selected( $before_type, 'wpcmn-notes-alert', false ) . '>' . __( 'Alert', 'wpcmn' ) . '</option>';
-					do_action( 'wpcmn_before_types', $before_type );
+					echo '<select id="gleads-before-type" name="gleads-notes[before-type]">';
+					echo '<option value="gleads-notes-standard"' . selected( $before_type, 'gleads-notes-standard', false ) . '>' . __( 'Standard', 'gleads' ) . '</option>';
+					echo '<option value="gleads-notes-warning"' . selected( $before_type, 'gleads-notes-warning', false ) . '>' . __( 'Warning', 'gleads' ) . '</option>';
+					echo '<option value="gleads-notes-alert"' . selected( $before_type, 'gleads-notes-alert', false ) . '>' . __( 'Alert', 'gleads' ) . '</option>';
+					do_action( 'gleads_before_types', $before_type );
 					echo '</select>';
 				echo '</td>';
 			echo '</tr>';
 
-			echo '<tr class="wpcmn-notes-title"' . $enabled_display . '>';
-			echo '<td colspan="2"><h5>'.__( 'After Notes Area', 'wpcmn' ) . '</h5></td>';
+			echo '<tr class="gleads-notes-title"' . $enabled_display . '>';
+			echo '<td colspan="2"><h5>'.__( 'After Notes Area', 'gleads' ) . '</h5></td>';
 			echo '</tr>';
 
-			echo '<tr class="wpcmn-notes-data wpcmn-notes-after-text"' . $enabled_display . '>';
-				echo '<th>'.__( 'Message Text', 'wpcmn' ) . '</th>';
+			echo '<tr class="gleads-notes-data gleads-notes-after-text"' . $enabled_display . '>';
+				echo '<th>'.__( 'Message Text', 'gleads' ) . '</th>';
 				echo '<td>';
-					echo '<textarea class="widefat" name="wpcmn-notes[after-text]" id="wpcmn-after">'.esc_attr( $after_text ) . '</textarea>';
+					echo '<textarea class="widefat" name="gleads-notes[after-text]" id="gleads-after">'.esc_attr( $after_text ) . '</textarea>';
 				echo '</td>';
 			echo '</tr>';
 
-			echo '<tr class="wpcmn-notes-data wpcmn-notes-after-type"' . $enabled_display . '>';
-				echo '<th>'.__( 'Message Type', 'wpcmn' ) . '</th>';
+			echo '<tr class="gleads-notes-data gleads-notes-after-type"' . $enabled_display . '>';
+				echo '<th>'.__( 'Message Type', 'gleads' ) . '</th>';
 				echo '<td>';
-					echo '<select id="wpcmn-after-type" name="wpcmn-notes[after-type]">';
-					echo '<option value="wpcmn-notes-standard"' . selected( $after_type, 'wpcmn-notes-standard', false ) . '>' . __( 'Standard', 'wpcmn' ) . '</option>';
-					echo '<option value="wpcmn-notes-warning"' . selected( $after_type, 'wpcmn-notes-warning', false ) . '>' . __( 'Warning', 'wpcmn' ) . '</option>';
-					echo '<option value="wpcmn-notes-alert"' . selected( $after_type, 'wpcmn-notes-alert', false ) . '>' . __( 'Alert', 'wpcmn' ) . '</option>';
-					do_action( 'wpcmn_after_types', $after_type );
+					echo '<select id="gleads-after-type" name="gleads-notes[after-type]">';
+					echo '<option value="gleads-notes-standard"' . selected( $after_type, 'gleads-notes-standard', false ) . '>' . __( 'Standard', 'gleads' ) . '</option>';
+					echo '<option value="gleads-notes-warning"' . selected( $after_type, 'gleads-notes-warning', false ) . '>' . __( 'Warning', 'gleads' ) . '</option>';
+					echo '<option value="gleads-notes-alert"' . selected( $after_type, 'gleads-notes-alert', false ) . '>' . __( 'Alert', 'gleads' ) . '</option>';
+					do_action( 'gleads_after_types', $after_type );
 					echo '</select>';
 				echo '</td>';
 			echo '</tr>';
@@ -209,7 +209,7 @@ class WP_Comment_Notes
 			return $post_id;
 
 		// do our nonce check. ALWAYS A NONCE CHECK
-		if ( ! isset( $_POST['wpcmn_meta_nonce'] ) || ! wp_verify_nonce( $_POST['wpcmn_meta_nonce'], 'wpcmn_meta_nonce' ) )
+		if ( ! isset( $_POST['gleads_meta_nonce'] ) || ! wp_verify_nonce( $_POST['gleads_meta_nonce'], 'gleads_meta_nonce' ) )
 			return $post_id;
 
 		$types = $this->get_post_types();
@@ -233,7 +233,7 @@ class WP_Comment_Notes
 		}
 
 		// all clear. get data via $_POST and store it
-		$notes	= ! empty( $_POST['wpcmn-notes'] ) ? $_POST['wpcmn-notes'] : false;
+		$notes	= ! empty( $_POST['gleads-notes'] ) ? $_POST['gleads-notes'] : false;
 
 		// update side meta data
 		if ( $notes ) {
@@ -254,12 +254,12 @@ class WP_Comment_Notes
 				)
 			);
 
-			update_post_meta( $post_id, '_wpcmn_notes', wp_kses( $notes, $allowed_html ) );
+			update_post_meta( $post_id, '_gleads_notes', wp_kses( $notes, $allowed_html ) );
 
-			do_action( 'wpcmn_notes_save', $post_id, $notes );
+			do_action( 'gleads_notes_save', $post_id, $notes );
 
 		} else {
-			delete_post_meta( $post_id, '_wpcmn_notes' );
+			delete_post_meta( $post_id, '_gleads_notes' );
 		}
 
 	}
@@ -274,7 +274,7 @@ class WP_Comment_Notes
 	public function front_scripts() {
 
 		// check for killswitch first
-		$killswitch	= apply_filters( 'wpcmn_killswitch', false );
+		$killswitch	= apply_filters( 'gleads_killswitch', false );
 
 		if ( $killswitch )
 			return false;
@@ -282,7 +282,7 @@ class WP_Comment_Notes
 		$types = $this->get_post_types();
 
 		if ( is_singular( $types ) )
-			wp_enqueue_style( 'wpcmn-notes', plugins_url( 'lib/css/wpcmn-notes.css', __FILE__ ), array(), WPCMN_VER, 'all' );
+			wp_enqueue_style( 'gleads-notes', plugins_url( 'lib/css/gleads-notes.css', __FILE__ ), array(), G_LEADS, 'all' );
 
 	}
 
@@ -297,7 +297,7 @@ class WP_Comment_Notes
 		global $post;
 
 		// get the possible meta fields
-		$notes	= get_post_meta( $post->ID, '_wpcmn_notes', true );
+		$notes	= get_post_meta( $post->ID, '_gleads_notes', true );
 
 		if ( empty( $notes ) )
 			return $fields;
@@ -305,10 +305,10 @@ class WP_Comment_Notes
 		if ( isset( $notes['before-text'] ) ) :
 			// grab the variables
 			$text	= $notes['before-text'];
-			$class	= isset( $notes['before-type'] ) ? $notes['before-type'] : 'wpcmn-notes-standard';
+			$class	= isset( $notes['before-type'] ) ? $notes['before-type'] : 'gleads-notes-standard';
 			// build the string
 
-			$before	= '<p class="wpcmn-notes wpcmn-notes-before' . esc_attr( $class ) . '">' . $text . '</p>';
+			$before	= '<p class="gleads-notes gleads-notes-before' . esc_attr( $class ) . '">' . $text . '</p>';
 
 			// output
 			$fields['comment_notes_before'] = $before;
@@ -318,10 +318,10 @@ class WP_Comment_Notes
 		if ( isset( $notes['after-text'] ) ) :
 			// grab the variables
 			$text	= $notes['after-text'];
-			$class	= isset( $notes['after-type'] ) ? $notes['after-type'] : 'wpcmn-notes-standard';
+			$class	= isset( $notes['after-type'] ) ? $notes['after-type'] : 'gleads-notes-standard';
 			// build the string
 
-			$after	= '<p class="wpcmn-notes wpcmn-notes-after' . esc_attr( $class ) . '">' . $text . '</p>';
+			$after	= '<p class="gleads-notes gleads-notes-after' . esc_attr( $class ) . '">' . $text . '</p>';
 
 			// output
 			$fields['comment_notes_after'] = $after;
@@ -348,7 +348,7 @@ class WP_Comment_Notes
 			}
 		}
 
-		return apply_filters( 'wpcmn_type_support', $types );
+		return apply_filters( 'gleads_type_support', $types );
 	}
 
 /// end class
@@ -356,4 +356,4 @@ class WP_Comment_Notes
 
 
 // Instantiate our class
-$WP_Comment_Notes = WP_Comment_Notes::getInstance();
+$G_Leads = G_Leads::getInstance();
