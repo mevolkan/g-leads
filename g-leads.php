@@ -2,10 +2,14 @@
 /*
 Plugin Name: G Leads
 Plugin URI: github.com/mevolkan/g-leads
-Description: G Leads is a WordPress plugin designed to help you manage custom data entries from within the WordPress admin panel. With this plugin, you can efficiently add, edit, delete, and view custom data stored in your WordPress database.
+Description: G Leads is a WordPress plugin designed to help you manage custom data entries from within the WordPress admin panel.
 Version: 1.0.0
 Author: Samuel Nzaro
 Author URI: nzaro19@gmail.com
+License: GPL-2.0+
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: g-leads
+Domain Path: /languages
 
     Copyright 2013 Samuel Nzaro
 
@@ -241,7 +245,7 @@ class G_Leads
 
         // Verify user capability
         if ( !current_user_can( 'manage_options' ) ) {
-            wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+            wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'textdomain' ) );
         }
 
         // // Check nonce for security
@@ -258,7 +262,7 @@ class G_Leads
             $lead       = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) );
 
             if ( !$lead ) {
-                wp_die( __( 'Lead not found.', 'textdomain' ) );
+                wp_die( esc_html__( 'Lead not found.', 'textdomain' ) );
             }
 
             // Check if form is submitted
@@ -300,7 +304,7 @@ class G_Leads
                 exit;
             }
         } else {
-            wp_die( __( 'Invalid lead ID.', 'textdomain' ) );
+            wp_die( esc_html__( 'Invalid lead ID.', 'textdomain' ) );
         }
     }
 
@@ -315,12 +319,12 @@ class G_Leads
 
         // Verify user capability
         if ( ! current_user_can( 'manage_options' ) ) {
-            wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+            wp_die( esc_html__( 'You do not have sufficient permissions to access this page.' ) );
         }
 
         // Verify nonce for security
         if ( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'delete_lead' ) ) {
-            wp_die( __( 'Security check failed', 'textdomain' ) );
+            wp_die( esc_html__( 'Security check failed', 'textdomain' ) );
         }
 
         // Get the lead ID from the query string
@@ -334,7 +338,7 @@ class G_Leads
             wp_redirect( admin_url( 'admin.php?page=custom-leads' ) );
             exit;
         } else {
-            wp_die( __( 'Invalid lead ID.', 'textdomain' ) );
+            wp_die( esc_html__( 'Invalid lead ID.', 'textdomain' ) );
         }
     }
 

@@ -3,12 +3,12 @@ Contributors: Samuel Nzaro
 Website Link: https://nzaro.netlify.app/
 Tags: Leads
 Requires at least: 6.0
-Tested up to: 6.1
+Tested up to: 6.6.1
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-G Leads is a WordPress plugin designed to help you manage custom data entries from within the WordPress admin panel. With this plugin, you can efficiently add, edit, delete, and view custom data stored in your WordPress database.
+G Leads is a WordPress plugin designed to help you manage custom data entries from within the WordPress admin panel.
 
 == Features ==
 

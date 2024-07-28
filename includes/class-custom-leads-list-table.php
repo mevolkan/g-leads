@@ -64,7 +64,7 @@ class Custom_Leads_List_Table extends WP_List_Table
         );
 
         // Output the delete link with JavaScript confirmation
-        echo '<a href="#" class="delete-lead" data-url="' . esc_url( $delete_url ) . '">' . __( 'Delete', 'textdomain' ) . '</a>';
+        echo '<a href="#" class="delete-lead" data-url="' . esc_url( $delete_url ) . '">' . esc_html__( 'Delete', 'textdomain' ) . '</a>';
     }
 
     /**
@@ -86,12 +86,14 @@ class Custom_Leads_List_Table extends WP_List_Table
 
         $this->process_bulk_action();
 
-        $total_items = $wpdb->get_var( "SELECT COUNT(id) FROM $table_name" );
+        $query       = $wpdb->prepare( "SELECT COUNT(id) FROM $table_name" );
+        $total_items = $wpdb->get_var( $query );
 
         $paged  = $this->get_pagenum();
         $offset = ( $paged - 1 ) * $per_page;
 
-        $items = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name LIMIT %d OFFSET %d", $per_page, $offset ) );
+        $query = $wpdb->prepare( "SELECT * FROM $table_name LIMIT %d OFFSET %d", $per_page, $offset );
+        $items = $wpdb->get_results( $query );
 
         $this->items = $items;
 
