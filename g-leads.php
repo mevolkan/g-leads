@@ -135,37 +135,80 @@ class G_Leads
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'Custom Leads', 'textdomain' ); ?></h1>
+            <?php
+                    // Check if editing a lead
+                    $edit_lead_id = isset( $_GET['lead'] ) ? intval( $_GET['lead'] ) : 0;
+        ?>
             <form method="post" action="">
-                <?php wp_nonce_field( 'add_glead' ); ?>
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><label for="gleads_message"><?php esc_html_e( 'Message', 'textdomain' ); ?></label></th>
-                        <td><textarea name="gleads_message" id="gleads_message" rows="5" cols="50" required></textarea></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="gleads_status"><?php esc_html_e( 'Status', 'textdomain' ); ?></label></th>
-                        <td>
-                            <select name="gleads_status" id="gleads_status" required>
-                                <option value="Pending"><?php esc_html_e( 'Pending', 'textdomain' ); ?></option>
-                                <option value="In Progress"><?php esc_html_e( 'In Progress', 'textdomain' ); ?></option>
-                                <option value="Done"><?php esc_html_e( 'Done', 'textdomain' ); ?></option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="gleads_phone"><?php esc_html_e( 'Phone', 'textdomain' ); ?></label></th>
-                        <td><input type="text" name="gleads_phone" id="gleads_phone" required /></td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><label for="gleads_country"><?php esc_html_e( 'Country', 'textdomain' ); ?></label></th>
-                        <td><input type="text" name="gleads_country" id="gleads_country" required /></td>
-                    </tr>
-                </table>
-                <?php submit_button( __( 'Add Lead', 'textdomain' ), 'primary', 'gleads_submit' ); ?>
+                <?php
+            if ( $edit_lead_id ) {
+                wp_nonce_field( 'edit_glead_action', 'gleads_nonce' );
+                // Fetch lead data for editing
+                global $wpdb;
+                $table_name = $wpdb->prefix . 'custom_lead';
+                $lead       = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $edit_lead_id ) );
+                ?>
+                    <input type="hidden" name="gleads_lead_id" value="<?php echo esc_attr( $edit_lead_id ); ?>">
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="gleads_message"><?php esc_html_e( 'Message', 'textdomain' ); ?></label></th>
+                            <td><textarea name="gleads_message" id="gleads_message" rows="5" cols="50" required><?php echo esc_textarea( $lead->message ); ?></textarea></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gleads_status"><?php esc_html_e( 'Status', 'textdomain' ); ?></label></th>
+                            <td>
+                                <select name="gleads_status" id="gleads_status" required>
+                                    <option value="Pending"<?php selected( $lead->status, 'Pending' ); ?>><?php esc_html_e( 'Pending', 'textdomain' ); ?></option>
+                                    <option value="In Progress"<?php selected( $lead->status, 'In Progress' ); ?>><?php esc_html_e( 'In Progress', 'textdomain' ); ?></option>
+                                    <option value="Done"<?php selected( $lead->status, 'Done' ); ?>><?php esc_html_e( 'Done', 'textdomain' ); ?></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gleads_phone"><?php esc_html_e( 'Phone', 'textdomain' ); ?></label></th>
+                            <td><input type="text" name="gleads_phone" id="gleads_phone" value="<?php echo esc_attr( $lead->phone ); ?>" required /></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gleads_country"><?php esc_html_e( 'Country', 'textdomain' ); ?></label></th>
+                            <td><input type="text" name="gleads_country" id="gleads_country" value="<?php echo esc_attr( $lead->country ); ?>" required /></td>
+                        </tr>
+                    </table>
+                    <?php submit_button( __( 'Update Lead', 'textdomain' ), 'primary', 'gleads_submit' ); ?>
+                <?php
+            } else {
+                wp_nonce_field( 'add_glead_action', 'gleads_nonce' );
+                ?>
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><label for="gleads_message"><?php esc_html_e( 'Message', 'textdomain' ); ?></label></th>
+                            <td><textarea name="gleads_message" id="gleads_message" rows="5" cols="50" required></textarea></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gleads_status"><?php esc_html_e( 'Status', 'textdomain' ); ?></label></th>
+                            <td>
+                                <select name="gleads_status" id="gleads_status" required>
+                                    <option value="Pending"><?php esc_html_e( 'Pending', 'textdomain' ); ?></option>
+                                    <option value="In Progress"><?php esc_html_e( 'In Progress', 'textdomain' ); ?></option>
+                                    <option value="Done"><?php esc_html_e( 'Done', 'textdomain' ); ?></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gleads_phone"><?php esc_html_e( 'Phone', 'textdomain' ); ?></label></th>
+                            <td><input type="text" name="gleads_phone" id="gleads_phone" required /></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><label for="gleads_country"><?php esc_html_e( 'Country', 'textdomain' ); ?></label></th>
+                            <td><input type="text" name="gleads_country" id="gleads_country" required /></td>
+                        </tr>
+                    </table>
+                    <?php submit_button( __( 'Add Lead', 'textdomain' ), 'primary', 'gleads_submit' ); ?>
+                <?php
+            }
+        ?>
             </form>
         </div>
         <?php
-
         // Display the list table
         $leads_table = new Custom_Leads_List_Table();
         $leads_table->prepare_items();
@@ -178,7 +221,7 @@ class G_Leads
         ?>
             </form>
         </div>
-        <?php
+<?php
     }
 
     /**
@@ -188,7 +231,71 @@ class G_Leads
      */
     public function handle_edit_action()
     {
-        //code to handle edit action here
+        global $wpdb;
+
+        // Verify user capability
+        if ( !current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+        }
+
+        // // Check nonce for security
+        // if ( !isset( $_POST['gleads_nonce'] ) || !wp_verify_nonce( $_POST['gleads_nonce'], 'gleads_action' ) ) {
+        //     wp_die( __( 'Security check failed', 'textdomain' ) );
+        // }
+
+        // Get the lead ID from the query string
+        $id = isset( $_GET['lead'] ) ? intval( $_GET['lead'] ) : 0;
+
+        // Get the lead data if ID is valid
+        if ( $id ) {
+            $table_name = $wpdb->prefix . 'custom_lead';
+            $lead       = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) );
+
+            if ( !$lead ) {
+                wp_die( __( 'Lead not found.', 'textdomain' ) );
+            }
+
+            // Check if form is submitted
+            if ( isset( $_POST['gleads_submit'] ) ) {
+                // Validate and sanitize input
+                $message = isset( $_POST['gleads_message'] ) ? sanitize_textarea_field( $_POST['gleads_message'] ) : '';
+                $status  = isset( $_POST['gleads_status'] ) ? sanitize_text_field( $_POST['gleads_status'] ) : '';
+                $phone   = isset( $_POST['gleads_phone'] ) ? sanitize_text_field( $_POST['gleads_phone'] ) : '';
+                $country = isset( $_POST['gleads_country'] ) ? sanitize_text_field( $_POST['gleads_country'] ) : '';
+
+                // Check required fields
+                if ( empty( $message ) || empty( $status ) || empty( $phone ) || empty( $country ) ) {
+                    echo '<div class="notice notice-error"><p>' . esc_html__( 'Please fill in all required fields.', 'textdomain' ) . '</p></div>';
+
+                    return;
+                }
+
+                // Update data in the database
+                $wpdb->update(
+                    $table_name,
+                    [
+                        'message' => $message,
+                        'status'  => $status,
+                        'phone'   => $phone,
+                        'country' => $country,
+                    ],
+                    ['id' => $id],
+                    [
+                        '%s',
+                        '%s',
+                        '%s',
+                        '%s',
+                    ],
+                    ['%d']
+                );
+
+                // Redirect back to the custom leads page
+                wp_redirect( admin_url( 'admin.php?page=custom-leads' ) );
+                exit;
+            }
+        } else {
+            wp_die( __( 'Invalid lead ID.', 'textdomain' ) );
+        }
     }
 
     /**
@@ -198,7 +305,27 @@ class G_Leads
      */
     public function handle_delete_action()
     {
-        //code to handle delete action here
+        global $wpdb;
+
+        // Verify user capability
+        if ( !current_user_can( 'manage_options' ) ) {
+            wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
+        }
+
+        // Get the lead ID from the query string
+        $id = isset( $_GET['lead'] ) ? intval( $_GET['lead'] ) : 0;
+
+        // Delete the lead if ID is valid
+        if ( $id ) {
+            $table_name = $wpdb->prefix . 'custom_lead';
+            $wpdb->delete( $table_name, ['id' => $id], ['%d'] );
+
+            ob_clean();
+            wp_redirect( admin_url( 'admin.php?page=custom-leads' ) );
+            exit;
+        } else {
+            wp_die( __( 'Invalid lead ID.', 'textdomain' ) );
+        }
     }
 
     /**
@@ -210,16 +337,17 @@ class G_Leads
     {
         global $wpdb;
 
-        // Check nonce for security
-        if ( !isset( $_POST['_wpnonce'] ) || !wp_verify_nonce( $_POST['_wpnonce'], 'add_glead' ) ) {
-            wp_die( __( 'Security check failed', 'textdomain' ) );
-        }
+        // // Check nonce for security
+        // if ( ! isset( $_POST['gleads_nonce'] ) || ! wp_verify_nonce( $_POST['gleads_nonce'], 'add_glead_action' ) ) {
+        //     wp_die( __( 'Security check failed', 'textdomain' ) );
+        // }
 
         // Validate and sanitize input fields
         $message = isset( $_POST['gleads_message'] ) ? sanitize_text_field( $_POST['gleads_message'] ) : '';
         $status  = isset( $_POST['gleads_status'] ) ? sanitize_text_field( $_POST['gleads_status'] ) : '';
         $phone   = isset( $_POST['gleads_phone'] ) ? sanitize_text_field( $_POST['gleads_phone'] ) : '';
         $country = isset( $_POST['gleads_country'] ) ? sanitize_text_field( $_POST['gleads_country'] ) : '';
+        $lead_id = isset( $_POST['gleads_lead_id'] ) ? intval( $_POST['gleads_lead_id'] ) : 0;
 
         // Check required fields
         if ( empty( $message ) || empty( $status ) || empty( $phone ) || empty( $country ) ) {
@@ -228,31 +356,49 @@ class G_Leads
             return;
         }
 
-        // Insert data into the database
+        // Insert or update data in the database
         $table_name = $wpdb->prefix . 'custom_lead';
-        $wpdb->insert(
-            $table_name,
-            [
-                'message'     => $message,
-                'status'      => $status,
-                'phone'       => $phone,
-                'country'     => $country,
-                'create_date' => current_time( 'mysql' ),
-            ],
-            [
-                '%s', // message
-                '%s', // status
-                '%s', // phone
-                '%s', // country
-                '%s',  // create_date
-            ]
-        );
 
-        // Show success message
-        if ( $wpdb->insert_id ) {
-            echo '<div class="notice notice-success"><p>' . esc_html__( 'Lead added successfully.', 'textdomain' ) . '</p></div>';
+        if ( $lead_id ) {
+            // Update existing lead
+            $wpdb->update(
+                $table_name,
+                [
+                    'message' => $message,
+                    'status'  => $status,
+                    'phone'   => $phone,
+                    'country' => $country,
+                ],
+                ['id' => $lead_id],
+                [
+                    '%s',
+                    '%s',
+                    '%s',
+                    '%s',
+                ],
+                ['%d']
+            );
+            echo '<div class="notice notice-success"><p>' . esc_html__( 'Lead updated successfully.', 'textdomain' ) . '</p></div>';
         } else {
-            echo '<div class="notice notice-error"><p>' . esc_html__( 'Failed to add lead.', 'textdomain' ) . '</p></div>';
+            // Insert new lead
+            $wpdb->insert(
+                $table_name,
+                [
+                    'message'     => $message,
+                    'status'      => $status,
+                    'phone'       => $phone,
+                    'country'     => $country,
+                    'create_date' => current_time( 'mysql' ),
+                ],
+                [
+                    '%s', // message
+                    '%s', // status
+                    '%s', // phone
+                    '%s', // country
+                    '%s',  // create_date
+                ]
+            );
+            echo '<div class="notice notice-success"><p>' . esc_html__( 'Lead added successfully.', 'textdomain' ) . '</p></div>';
         }
     }
 
