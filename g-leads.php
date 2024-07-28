@@ -43,6 +43,10 @@ class G_Leads
 	 */
 	private function __construct()
 	{
+		// Activation hook to create the custom leads table
+		register_activation_hook(__FILE__, array($this, 'create_custom_lead_table'));
+
+
 		// back end
 		add_action('plugins_loaded', array($this, 'textdomain'));
 		add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
@@ -120,12 +124,43 @@ class G_Leads
 	 */
 	public function display_custom_leads_page()
 	{
-		?>
+?>
 		<div class="wrap">
 			<h1><?php esc_html_e('Custom Leads', 'textdomain'); ?></h1>
 			<p><?php esc_html_e('Welcome to the Custom Leads page.', 'textdomain'); ?></p>
 		</div>
-		<?php
+<?php
+	}
+
+	/**
+	 * Create custom leads table
+	 *
+	 * @return void
+	 */
+	public function create_custom_lead_table()
+	{
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . 'custom_lead';
+
+		// Check if the table already exists
+		if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+
+			$charset_collate = $wpdb->get_charset_collate();
+
+			$sql = "CREATE TABLE $table_name (
+				id mediumint(9) NOT NULL AUTO_INCREMENT,
+				message text NOT NULL,
+				status enum('Pending', 'In Progress', 'Done') NOT NULL,
+				phone varchar(20) DEFAULT '' NOT NULL,
+				country varchar(100) DEFAULT '' NOT NULL,
+				create_date datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+				PRIMARY KEY  (id)
+			) $charset_collate;";
+
+			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+			dbDelta($sql);
+		}
 	}
 
 
