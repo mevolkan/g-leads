@@ -119,12 +119,99 @@ class G_Leads
      */
     public function display_custom_leads_page()
     {
+        // Check if form is submitted
+        if ( isset( $_POST['gleads_submit'] ) ) {
+            $this->handle_form_submission();
+        }
+
         ?>
-		<div class="wrap">
-			<h1><?php esc_html_e( 'Custom Leads', 'textdomain' ); ?></h1>
-			<p><?php esc_html_e( 'Welcome to the Custom Leads page.', 'textdomain' ); ?></p>
-		</div>
-<?php
+        <div class="wrap">
+            <h1><?php esc_html_e( 'Custom Leads', 'textdomain' ); ?></h1>
+            <form method="post" action="">
+                <?php wp_nonce_field( 'add_glead' ); ?>
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><label for="gleads_message"><?php esc_html_e( 'Message', 'textdomain' ); ?></label></th>
+                        <td><textarea name="gleads_message" id="gleads_message" rows="5" cols="50" required></textarea></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="gleads_status"><?php esc_html_e( 'Status', 'textdomain' ); ?></label></th>
+                        <td>
+                            <select name="gleads_status" id="gleads_status" required>
+                                <option value="Pending"><?php esc_html_e( 'Pending', 'textdomain' ); ?></option>
+                                <option value="In Progress"><?php esc_html_e( 'In Progress', 'textdomain' ); ?></option>
+                                <option value="Done"><?php esc_html_e( 'Done', 'textdomain' ); ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="gleads_phone"><?php esc_html_e( 'Phone', 'textdomain' ); ?></label></th>
+                        <td><input type="text" name="gleads_phone" id="gleads_phone" required /></td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><label for="gleads_country"><?php esc_html_e( 'Country', 'textdomain' ); ?></label></th>
+                        <td><input type="text" name="gleads_country" id="gleads_country" required /></td>
+                    </tr>
+                </table>
+                <?php submit_button( __( 'Add Lead', 'textdomain' ), 'primary', 'gleads_submit' ); ?>
+            </form>
+        </div>
+        <?php
+    }
+
+    /**
+     * Handle form submission
+     *
+     * @return void
+     */
+    public function handle_form_submission()
+    {
+        global $wpdb;
+
+        // Check nonce for security
+        if ( !isset( $_POST['_wpnonce'] ) || !wp_verify_nonce( $_POST['_wpnonce'], 'add_glead' ) ) {
+            wp_die( __( 'Security check failed', 'textdomain' ) );
+        }
+
+        // Validate and sanitize input fields
+        $message = isset( $_POST['gleads_message'] ) ? sanitize_text_field( $_POST['gleads_message'] ) : '';
+        $status  = isset( $_POST['gleads_status'] ) ? sanitize_text_field( $_POST['gleads_status'] ) : '';
+        $phone   = isset( $_POST['gleads_phone'] ) ? sanitize_text_field( $_POST['gleads_phone'] ) : '';
+        $country = isset( $_POST['gleads_country'] ) ? sanitize_text_field( $_POST['gleads_country'] ) : '';
+
+        // Check required fields
+        if ( empty( $message ) || empty( $status ) || empty( $phone ) || empty( $country ) ) {
+            echo '<div class="notice notice-error"><p>' . esc_html__( 'Please fill in all required fields.', 'textdomain' ) . '</p></div>';
+
+            return;
+        }
+
+        // Insert data into the database
+        $table_name = $wpdb->prefix . 'custom_lead';
+        $wpdb->insert(
+            $table_name,
+            [
+                'message'     => $message,
+                'status'      => $status,
+                'phone'       => $phone,
+                'country'     => $country,
+                'create_date' => current_time( 'mysql' ),
+            ],
+            [
+                '%s', // message
+                '%s', // status
+                '%s', // phone
+                '%s', // country
+                '%s',  // create_date
+            ]
+        );
+
+        // Show success message
+        if ( $wpdb->insert_id ) {
+            echo '<div class="notice notice-success"><p>' . esc_html__( 'Lead added successfully.', 'textdomain' ) . '</p></div>';
+        } else {
+            echo '<div class="notice notice-error"><p>' . esc_html__( 'Failed to add lead.', 'textdomain' ) . '</p></div>';
+        }
     }
 
     /**
